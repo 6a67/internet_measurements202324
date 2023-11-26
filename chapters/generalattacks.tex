@@ -1,0 +1,67 @@
+\section{Scope of Attacks against Authoritative DNS Servers} \label{sec:scopeofattacksagainstauthoritativednsservers}
+The preceding examples highlight the impact of specific attacks targeting authoritative DNS servers.
+However, the goal of the study is to infer a more general overview of the scope of these attacks.
+The following section delves into the insights that can be extracted from the data and the implications of these findings.
+\subsection{Attack Targets}
+The UCSD Network Telescope data indicates that approximately 0.5\% to 2\% of all potential attacks are directed at the DNS infrastructure.
+While the absolute number of attacks is relatively low, a successful attack on a nameserver could have a significant impact on millions of domains and their users.
+On average, each attack potentially affects a small number of domains.
+However, the measurements show eight peaks that impacted 10 million domains, or approximately 4\% of the domains covered by OpenINTEL.
+These attacks had negligible impacts on resolution time.
+Most attacks target large hosting companies such as Google, Unified Layer, and Cloudflare, with very little impact on the overall infrastructure \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Attack Characteristics}
+The analysis of \ac{DoS} attack characteristics shows that a significant majority (80.7\%) of attacks targeted a single port and protocol. The most common protocol used is TCP (90.4\%), followed by UDP (8.4\%) and ICMP (1.2\%).
+
+While DNS originated as a UDP-based protocol, the use of TCP has increased over the years, and many authoritative nameservers have adopted TCP as a protocol \cite{Mao2022AssessingSF}.
+
+The most common ports targeted by TCP attacks were port 80 (HTTP), port 53 (DNS), and port 443 (HTTPS), accounting for 37.1\%, 30.1\%, and 26.1\% of attacks, respectively.
+UDP attacks targeted a more diverse set of ports, with one-third of attacks targeting port 53 (DNS).
+
+The persistent popularity of TCP SYN flooding attacks \cite{cloudflareddosreport2022} \cite{netscoutdirectpath}, even when overtaken by other attack vectors \cite{cloudflareddosreport2023q1} \cite{cloudflareddosreport2023q2}, may be the reason for the high number of TCP-based attacks.
+TCP SYN flooding attacks work by sending a large number of SYN packets to a target server, exploiting the TCP three-way handshake, and leaving the target with half-open connections that consume resources \cite[688-690]{Stallings_William2022-06-06}.
+
+Notably, the majority of attacks targeting DNS nameservers did not target port 53, the port used by DNS.
+
+Without knowing the attackers' goals and motivations, it is difficult to infer the reasons for this behavior and the chosen attack vectors.
+However, even attacks not targeting port 53 can still have an impact on the DNS infrastructure, as the network and server resources can still be overwhelmed by the attack traffic \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Attack Impacts}
+Most identified \ac{DoS} attacks have no impact on the ability to resolve domain names, with only 1\% of attacks resulting in a resolution failure.
+However, smaller nameservers (10-10,000 domains) are more vulnerable, even if they use an anycast configuration.
+
+Similarly, the majority of attacks have no impact on the resolution time.
+In approximately only 5\% of cases, the resolution time increases by more than 10-fold, and in fewer than 2\% of cases, the resolution time increases by more than 100-fold.
+These attacks also primarily target smaller nameservers.
+Attacks targeting larger nameservers are less effective, but can still lead to a 2- to 3-fold increase in resolution time \cite{Sommese2022DDoSDNS}.
+
+Overall, most \ac{DoS} attacks on DNS authoritative servers are ineffective, but some can have a significant impact.
+The real-world impact of these attacks will vary depending on the end user's DNS resolver.
+Most DNS resolvers cache query results for a certain amount of time, so an increase in resolution time or failure of resolution will only be noticeable if the cached result expires during the attack.
+
+
+\subsection{Effect of Intensity and Duration on the Attack Impact}
+Determining the severity of an attack from the UCSD Network Telescope data is a complex task.
+As noted in \Cref{subsec:limitations}, the data only permits the identification of \ac{RSDoS} attacks.
+If an attacker employs alternative attack vectors, the data will only reflect the \ac{RSDoS} component, making it challenging to assess the true intensity.
+Furthermore, even when the Telescope indicates a high-intensity attack, determining the impact proves difficult as it hinges on the target's infrastructure.
+Overall, while the data enables the identification of potential attacks, it does not facilitate a detailed analysis of all attack vectors or a correlation with the impact \cite{moore2006}.
+
+Most effective attacks were short-lived, ranging from 15 to 60 minutes.
+Given that the Telescope only detects \ac{RSDoS} attacks, a successful attack may appear as a short-lived event, even if it persisted for an extended period, as backscatter traffic may be hindered if the victim cannot respond to the incoming traffic.
+
+In summary, the UCSD Network Telescope data is valuable for identifying potential attacks, but it falls short of providing a comprehensive assessment of their impact \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Effect of Anycast Deployment and Network Diversification on the Attack Impact} \label{subsec:soa_anycastdeploymentandnetworkdiversification}
+Consistent with the findings in \Cref{sec:observableattacksandtheirimplications}, the broader data indicates that anycast deployments exhibit greater resilience, experiencing only a 1- to 1.5-fold increase in RTT while under attack.
+Partial anycast deployments, where only a portion of nameservers employ anycast, demonstrated reduced resilience compared to anycast-only deployments.
+Unicast-only deployments proved to be the most susceptible to attacks.
+
+Furthermore, the data suggests that dispersing nameservers across multiple subnets enhances resilience.
+Nameservers residing on the same \texttt{/24} subnet likely share the same network link.
+Sixty percent of the nameserver sets that experienced outages were hosted on the same \texttt{/24} subnet.
+Distributing nameservers across two subnets improves resilience, as only 30\% of nameserver sets that experienced outages spanned two \texttt{/24} subnets.
+Spreading nameservers across three subnets further strengthens resilience, with nameserver sets encompassing three or more subnets accounting for only 10\% of those that experienced outages \cite{Sommese2022DDoSDNS}.

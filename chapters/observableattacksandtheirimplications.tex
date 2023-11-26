@@ -1,0 +1,40 @@
+\section{Exemplary Attacks and their Implications} \label{sec:observableattacksandtheirimplications}
+The analyzed data reveals the impact of multiple attacks against different nameservers.
+The following section will delve into publicly acknowledged or reported attacks and their repercussions.
+
+
+\subsection{Attacks against TransIP's Nameservers} \label{subsec:attacksagainsttransipsnameservers}
+TransIP, a European domain and web hosting company, experienced two attacks that impaired the DNS resolution performance of its nameservers: one in December 2020 and the other in March 2021.
+Both attacks were acknowledged by TransIP \cite{transipddosdecember} \cite{transipddosmarch}.
+TransIP utilized three nameservers hosted in a unicast deployment.
+
+The December 2020 attack appears to have primarily targeted only one of the three nameservers, yet OpenINTEL recorded a 10-fold increase in resolution time due to the randomized querying of nameservers.
+
+The March 2021 attack was more severe and targeted all three nameservers.
+While the nameservers' resolution time was also negatively impacted, the attack also caused approximately one-fifth of queries to time out, amplifying the attack's noticeable impact \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Attacks against Russian Nameservers} \label{subsec:attacksagainstrussiannameservers}
+The TransIP example illustrates an attack targeting a commercial entity, while attacks against Russian assets are suggested to be politically motivated.
+In March 2022, an attack targeted \texttt{mil.ru}, the domain of the Russian Ministry of Defense \cite{wiredrussiaddos}.
+The domain was managed by three unicast nameservers on the same \texttt{/24} subnet.
+During the attack, both OpenINTEL and the reactive measurements failed to resolve the domain, and it was reported that the domain was geo-fenced, allowing only requests from within Russia.
+
+In the same month, another attack targeting the nameservers of the state-owned Russian Railway company was observed.
+The three nameservers were hosted on two different \texttt{/24} subnets and used unicast.
+All three servers were targeted by the attack, and degradations in resolution time and timeouts were measured \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Implications} \label{subsec:ex_implications}
+In an attempt to filter out malicious traffic, TransIP implemented a traffic scrubbing technique.
+However, despite this measure, the attacks still had a significant impact on their servers and a substantial portion of their customers.
+Their servers were deployed in a unicast configuration across three different subnets in two distinct geographical locations.
+This deployment renders the infrastructure heavily reliant on these three physical servers and their corresponding network links.
+
+Similarly, the \texttt{mil.ru} nameservers were hosted on the same subnet, implying that they shared the same network link.
+In such configurations, targeting the network links of the servers can be sufficient to execute a successful DoS attack.
+
+The Russian Railway nameservers were hosted on two different subnets, but all three nameservers employed unicast and were individually targeted by the attack.
+In a unicast configuration, overwhelming the physical server can lead to a successful attack.
+
+A more diverse infrastructure with more physical servers using anycast and distributed across different networks would allow for the distribution of the load and reduce the point of failure \cite{Sommese2022DDoSDNS}.

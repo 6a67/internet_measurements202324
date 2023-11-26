@@ -1,0 +1,38 @@
+\section{Theoretical Background} \label{sec:dnsandanycast}
+To comprehend the impact of \ac{DoS} attacks on the \ac{DNS} infrastructure and its implications for evaluating mitigation techniques, a thorough understanding of DNS infrastructure management is essential.
+
+
+\subsection{Domain Name System} \label{subsec:dns}
+The \acf{DNS} operates as a distributed database system, mapping domain names to their corresponding IP addresses.
+Each DNS nameserver maintains a repository of DNS records associated with a particular domain name, and upon receiving queries for that domain name, it utilizes these records to provide responses.
+
+The DNS namespace is organized into a hierarchical structure resembling an inverted tree, comprising various levels of servers.
+These servers can be categorized into three primary groups: root DNS servers, \acf{TLD} DNS servers, and authoritative DNS servers.
+There are thirteen logical root DNS servers, which are distributed around the world and managed by the \ac{IANA}.
+
+When resolving a domain name, the DNS resolver initiates the process by querying a root DNS server for the requested domain name.
+Since root DNS servers typically lack direct entries for specific domain names, they provide the record of a \ac{TLD} DNS server, responsible for the \ac{TLD} associated with the requested domain name.
+For instance, upon querying \texttt{uni-osnabrueck.de}, the root DNS server would direct the resolver to the \ac{TLD} DNS server for the \texttt{.de} domain (e.g., \texttt{a.nic.de}), managed by DENIC.
+
+The DNS resolver then queries the \ac{TLD} DNS server for the requested domain name.
+This \ac{TLD} DNS server, in turn, provides the record of an authoritative DNS server specifically responsible for the requested domain name.
+For the query \texttt{uni-osnabrueck.de}, the \ac{TLD} DNS server would provide the entry for the authoritative DNS server for the domain (e.g., \texttt{dns-1.serv.uni-osnabrueck.de}).
+The DNS resolver subsequently queries this authoritative DNS server, which delivers the IP address corresponding to the domain name.
+
+During the domain resolution process, an end user's client typically does not interact with all DNS servers in the hierarchy.
+Instead, it communicates with a DNS resolver, which subsequently queries the DNS servers in the hierarchy and relays the results back to the client.
+
+To minimize the number of queries directed to DNS servers, most DNS resolvers employ a caching mechanism, temporarily storing DNS records for a specified duration \cite[126-127]{James_Kurose}.
+
+
+\subsection{Anycast} \label{subsec:anycast}
+The original DNS protocol was designed to utilize the \ac{UDP} with a maximum packet length of 512 bytes \cite{rfc1035}.
+This limitation constrained the number of root DNS servers to thirteen, as a larger number would have exceeded the packet size limit \cite{markandrews}.
+With only thirteen root DNS servers, each operating under unique network conditions and server resource constraints, the system would be incapable of handling the sheer volume of DNS queries directed to them.
+
+To address this challenge, all root DNS servers employ \textit{anycast} \cite{rootserversorg}, a network addressing and routing technique that enables a group of hosts to share the same IP address.
+Incoming packets are routed to the host within the group closest to the sender, typically in terms of network hops, and with the capacity to handle the request.
+This approach distributes the load, ensuring that even if one server becomes overwhelmed, requests can still be processed by other available hosts.
+
+Moreover, an anycast network is not restricted to a single network link, allowing the distribution of hosts across different geographical locations and data centers.
+This technology is utilized not only by root DNS servers but also by \ac{TLD} DNS servers and authoritative DNS servers to distribute the load across multiple servers, ensuring a more reliable and responsive DNS service \cite{Sommese2021CharacterizationOA} \cite[406-407]{James_Kurose}.

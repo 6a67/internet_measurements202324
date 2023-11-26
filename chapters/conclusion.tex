@@ -1,0 +1,15 @@
+\section{Conclusion}
+This study delves into an analysis of \ac{DoS} attacks targeting authoritative nameservers, drawing upon data from the UCSD Network Telescope and OpenINTEL datasets alongside additional measurements.
+
+The frequency of DNS attacks is relatively low, with the majority of attacks failing to disrupt DNS resolution for the vast majority of end users.
+However, certain attacks can have a substantial impact on smaller nameservers and pose real-world threats to service availability.
+
+Anycast configurations exhibit greater resilience to attacks compared to unicast configurations.
+Diversifying the network infrastructure further by deploying nameservers on multiple subnets can also enhance resilience.
+Therefore, DNS operators should consider implementing anycast nameservers and dispersing them across multiple subnets.
+
+The combined datasets offer a unique perspective on DNS attacks, providing insights from both passive and active network monitoring.
+The findings reveal that attackers employ a diverse range of ports and protocols to target authoritative DNS servers, with many attacks targeting ports other than port 53, the standard port for DNS.
+
+Overall, the study's findings highlight that DNS attacks pose a genuine threat.
+However, by implementing the countermeasures discussed in this paper, DNS operators can effectively mitigate the impact of attacks and strengthen the resilience of their DNS infrastructure.

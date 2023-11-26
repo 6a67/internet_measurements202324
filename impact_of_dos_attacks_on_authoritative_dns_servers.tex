@@ -1,0 +1,149 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[%
+    a4paper,                % Paper format
+    12pt,                   % Fontsize
+    bibliography=totoc,     % Include bibliography in table of contents
+    english,                % Language
+]{scrartcl} % KOMA-Script article
+
+\usepackage{a4wide}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage[nolist]{acronym}
+\usepackage{lipsum}
+\usepackage{ifthen}
+\usepackage{needspace}
+
+\usepackage[%
+    backend=biber,      % use bibtex as backend
+    urldate=iso,        % use iso date format for urls
+    seconds=true,       % display seconds in time stamps, needed for urldate
+    natbib=true,        % enable natbib compatibility
+    style=alphabetic,   % citation style
+    sorting=none        % sort by appearance in document
+]{biblatex} % bibliography
+
+\addbibresource{literatur.bib} % add bibliography file
+
+\usepackage[%
+    breaklinks=true,    % links survive linebreaks
+    colorlinks,         % links get colored instead of boxes
+    linkcolor=black,    % influences table of contents and page numbers
+    urlcolor=black,     % color for urls
+    citecolor=black,
+    bookmarks,          % creates bookmarks for pdf-viewer
+    bookmarksnumbered   % numbering of bookmarks
+]{hyperref} % package for internal links
+
+\usepackage[nameinlink]{cleveref}
+
+% Path for images
+\graphicspath{{ressources/}}            
+
+% Style rules
+\widowpenalty10000 % Avoids single lines of a paragraph at the beginning of a page
+\clubpenalty10000 % Avoids single lines of a paragraph at the end of a page
+\addtocontents{toc}{\protect\sloppy}
+\setcounter{tocdepth}{3}
+
+% Disable indents
+\setlength{\parindent}{0pt}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+% change these values to fit the document
+\newcommand{\PaperTitle}{Impact of DoS attacks on authoritative DNS servers} % Article title
+\newcommand{\SeminarTitle}{Internet Measurements} % Seminar title
+\newcommand{\SeminarTerm}{Wintersemester 2023/24} % Seminar term
+
+% these are just phantoms for the different editions
+\newcommand{\Author}{\phantom{Autor}} % Author name
+\newcommand{\MatrNr}{\phantom{Matrikelnummer}} % Matriculation number
+
+\newcommand{\Edition}[1][default]{%
+    \ifthenelse{\equal{#1}{public}}{%
+        % the public version does not contain the author's name and matriculation number
+    }{\ifthenelse{\equal{#1}{wiki}}{%
+        % the wiki version does not contain the matriculation number but the author's name
+    }{\ifthenelse{\equal{#1}{private}}{%
+        % the private version contains the author's name and matriculation number
+    }{%
+        % the default version is the same as the public version
+    }}}%
+}
+
+\InputIfFileExists{secrets.tex}{}{}
+
+% set the desired edition here
+\Edition[public] % default, public, wiki, private
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+% disable page numbering
+\pagenumbering{gobble}
+
+\input{chapters/titlepage.tex}
+
+% Table of contents
+\tableofcontents
+\newpage
+
+\pagestyle{plain}
+\pagenumbering{arabic} % start page numbering
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\input{chapters/introduction.tex}
+
+\input{chapters/dnsandanycast.tex}
+\input{chapters/methodologyanddatasets.tex}
+\input{chapters/observableattacksandtheirimplications.tex}
+\input{chapters/generalattacks.tex}
+
+\input{chapters/ethicalconsiderations.tex}
+
+\input{chapters/best_practices.tex}
+
+\needspace{10\baselineskip}
+\input{chapters/conclusion.tex}
+
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+\clearpage
+
+% List of abbreviations
+% \section*{Index of Abbreviations}
+% \addcontentsline{toc}{section}{Index of Abbreviations}
+\begin{acronym}[LAENGSTES]
+    \setlength{\itemsep}{-\parsep}
+    \acro{DNS}{Domain Name System}
+    \acro{DoS}{Denial of Service}
+    \acro{IANA}{Internet Assigned Numbers Authority}
+    \acro{RSDoS}{Randomly (and Uniformly) Spoofed Denial of Service}
+    \acro{DENIC}{Deutsches Network Information Center}
+    \acro{RTT}{Round-Trip Time}
+    \acro{TLD}{Top-Level Domain}
+    \acro{UDP}{User Datagram Protocol}
+    \acro{TTL}{Time-to-Live}
+\end{acronym}
+
+
+\printbibliography
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

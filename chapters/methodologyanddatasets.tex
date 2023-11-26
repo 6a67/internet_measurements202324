@@ -1,0 +1,48 @@
+\section{Methodology and Datasets} \label{sec:methodologyanddatasets}
+To identify and analyze \ac{DoS} attacks against authoritative DNS servers, an analysis was conducted on a combined dataset from the UCSD Network Telescope and OpenINTEL measurement project.
+This analysis spanned a 17-month period, encompassing data from November 1, 2020, to March 31, 2022.
+
+
+\subsection{UCSD Network Telescope - Passive Network Monitoring} \label{subsec:ucsd}
+A \ac{RSDoS} attack utilizes randomly spoofed source IP addresses to obscure the attack's origin and hinder the victim's ability to filter out malicious traffic.
+Unable to distinguish between legitimate and spoofed traffic, the victim attempts to respond to all incoming requests.
+These outgoing packets, generated in response to spoofed requests, are known as \textit{backscatter} traffic \cite{caidarsdos}.
+
+The UCSD Network Telescope, a network comprising a large number of unused IP addresses (roughly 1/256th of all IPv4 addresses), passively collects traffic directed to these spaces.
+Since these IP addresses are unassigned, any traffic received is considered suspicious, enabling the capture of backscatter traffic.
+By analyzing this backscatter data, DoS attacks can be identified and insights into their scale, target, and methodology can be obtained \cite{caidatelescope} \cite{10.1145/1132026.1132027}.
+
+
+\subsection{OpenINTEL - Active DNS Measurements} \label{subsec:openintel}
+The OpenINTEL measurement project conducts daily DNS queries on approximately 70\% of all registered domain names worldwide (as of Oct.\ 2023) \cite{openintel} \cite{dnib2023q2}.
+These measurements encompass resolution time, enabling the detection of anomalies in DNS latency and reachability.
+Since OpenINTEL does not provide information about the authoritative DNS server that answered the query, the IP addresses of nameservers associated with each domain are aggregated into a set.
+
+Over a 5-minute interval, the number of domains resolved by OpenINTEL, the average, minimum, and maximum \acf{RTT}, and the number of errors are collected for each set by aggregating data across all domains within the same set.
+Identifying an impact on the nameservers is achieved by comparing the average RTT of the set to the average RTT of the same set on the previous day.
+This approach allows for a meaningful comparison within the same set and allows for swift adaptation if the DNS infrastructure, and consequently, the latency, undergoes changes \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Methodology}
+The UCSD Network Telescope data can be leveraged to identify potential \ac{RSDoS} attacks against IP addresses.
+By cross-referencing the IP addresses of nameservers with elevated \ac{RTT} detected by OpenINTEL and the IP addresses identified by the UCSD Network Telescope data, potential \ac{RSDoS} attacks targeting authoritative DNS servers can be pinpointed.
+
+Utilizing the aggregated data from the OpenINTEL dataset enables the extraction of domain names served by the nameservers identified as potential targets.
+Measuring the RTT of these domains allows for an analysis of the impact of these attacks \cite{Sommese2022DDoSDNS}.
+
+
+\subsection{Limitations} \label{subsec:limitations}
+Gathering and identifying \acf{DoS} attacks is a complex undertaking.
+While combining data from the UCSD Network Telescope and OpenINTEL facilitates the detection of potential DoS attacks, it falls short of providing a comprehensive analysis.
+
+Specifically, the UCSD Network Telescope data only permits the identification of RSDoS attacks against IP addresses and is restricted to IPv4, excluding IPv6 addresses.
+Translating identified RSDoS attacks against IPv4 addresses to their IPv6 counterparts may be feasible, as IPv4 and IPv6 services often share network and server infrastructure \cite{Beverly2015ServerSI}.
+
+One limitation of OpenINTEL's random nameserver selection approach is its inability to identify attacks targeting specific nameservers.
+However, this approach provides a measurement of the overall end-user experience of resolving a domain name, as a typical end user does not select a specific nameserver.
+Additionally, due to the inherent nature of the anycast infrastructure, it is possible that ongoing attacks in specific geographic regions may not be detected using the OpenINTEL dataset.
+
+To address these limitations, an additional reactive measurement was implemented in conjunction with the dataset combination for attacks occurring after January 2022.
+Upon detecting a potential DoS attack, all nameservers belonging to a potentially attacked domain are queried iteratively.
+For each attack, 50 related domain names are queried evenly spread every 5 minutes during the attack and the following 24 hours.
+While this approach also has limitations, originating from a single network in the Netherlands, it does provide a more detailed analysis of the attack's impact \cite{Sommese2022DDoSDNS}.

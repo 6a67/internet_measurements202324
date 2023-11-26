@@ -1,0 +1,20 @@
+\section{Best Practices} \label{sec:best_practices}
+Anycast deployment plays a crucial role in mitigating the effects of DoS attacks, as discussed in \Cref{subsec:ex_implications} and \Cref{subsec:soa_anycastdeploymentandnetworkdiversification}.
+With an adoption rate of 97\% for TLD and 62\% for SLD DNS servers in 2021 \cite{Sommese2021CharacterizationOA}, anycast has become a widely used technique for enhancing the availability of DNS services.
+However, even with an anycast deployment, the risk of DoS attacks is not entirely eliminated.
+Employing additional unicast servers as a redundancy fallback can further mitigate the impact of DoS attacks, but it also increases the complexity and costs associated with the infrastructure \cite{Sommese2021CharacterizationOA}.
+
+DNS records contain a \acf{TTL} value that determines the maximum duration for which the record can be cached by a resolver.
+DNS caching is a widely used technique that reduces the load on authoritative nameservers and enhances the performance of the DNS resolution process.
+Moreover, cached records remain accessible in the event of a DoS attack against the authoritative DNS servers, enabling quick resolution of queries even if the authoritative nameservers are affected or unreachable.
+The appropriate \ac{TTL} value depends on various factors, and different values have different trade-offs.
+Longer \ac{TTL} values, such as 8, 12, or 24 hours, allow for cached responses during authoritative nameserver disruptions, while also permitting changes to propagate through the DNS system in a timely manner \cite{Moura2019CacheMI} \cite[140-141]{SommesePhD2023}.
+
+Domain operators can improve the resilience of the resolution process by supplying multiple nameservers that store the same records redundantly.
+The DNS specification mandates the use of at least two nameservers \cite{rfc1035}.
+If one nameserver falls victim to an attack and the other becomes unreachable due to other factors, the domain becomes inaccessible.
+Therefore, it is recommended to utilize at least three nameservers, dispersed across different geographical locations and networks, to further diversify the infrastructure and mitigate the risk of overloading server resources and network links.
+Increasing the number of nameservers further improves the infrastructure's resilience but also adds complexity and cost, raising the likelihood of misconfigured servers and increasing the packet size of DNS responses \cite{rfc2182}.
+Additional infrastructure diversification can be achieved by providing nameservers from different TLD servers (e.g., \texttt{.com} and \texttt{.net}). This enables domain resolution even if one of the TLD servers falls victim to an attack \cite[133-140]{SommesePhD2023}.
+
+In addition to DNS infrastructure-specific measures, implementing more general security measures such as intrusion detection and prevention systems, firewalls, and traffic filtering can further enhance the resilience of the DNS infrastructure \cite[145-159]{bhattacharyya2016ddos}.
